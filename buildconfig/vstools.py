@@ -1,9 +1,21 @@
 import re
+import sys
 
 try:
     from distutils.msvccompiler import MSVCCompiler, get_build_architecture
 except ImportError:
-    from setuptools._distutils.msvccompiler import MSVCCompiler, get_build_architecture
+    try:
+        from setuptools._distutils.msvccompiler import MSVCCompiler, get_build_architecture
+    except ImportError:
+        # Python 3.12+ workaround: distutils is completely removed
+        # We need to install setuptools with distutils support
+        if sys.version_info >= (3, 12):
+            raise ImportError(
+                "Python 3.12+ requires setuptools with distutils. "
+                "Please ensure setuptools is properly installed: pip install --upgrade setuptools"
+            )
+        raise
+
 import subprocess
 import os
 
